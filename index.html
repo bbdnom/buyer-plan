@@ -389,7 +389,6 @@
     <a href="#sec-map">Route</a>
     <a href="#sec-rejected">Rejected</a>
     <a href="#sec-contingency">Plan B</a>
-    <a href="#sec-ai-log">AI Log</a>
   </nav>
 
   <!-- HERO -->
@@ -593,12 +592,7 @@
     <div class="section-desc">
       전체 이동 반경 약 3km &middot; 도보 위주 + 택시 1회 &middot; 총 이동시간 약 40분
     </div>
-    <div class="map-container">
-      <iframe
-        src="https://www.google.com/maps/embed/v1/directions?key=AIzaSyCfH5yOTmbqjjbYXf2WP7xgXuVi2WniPEA&origin=InterContinental+Seoul+COEX&destination=오설록+티하우스+강남&waypoints=봉은사+서울|Fritz+Coffee+삼성|도산공원+서울|현대카드+디자인+라이브러리&mode=walking&language=ko"
-        allowfullscreen loading="lazy">
-      </iframe>
-    </div>
+    <div id="route-map" style="width:100%; height:450px; border-radius:8px; border:1px solid var(--border); background:var(--surface);"></div>
     <div class="route-stops">
       <span class="route-stop">InterContinental COEX</span>
       <span class="route-arrow">&rarr;</span>
@@ -711,63 +705,84 @@
     </div>
   </section>
 
-  <hr class="section-divider">
-
-  <!-- AI LOG -->
-  <section id="sec-ai-log">
-    <div class="section-label">07 &mdash; AI Collaboration Log</div>
-    <h2>AI 활용 기록</h2>
-    <div class="ai-log-section">
-
-      <div class="ai-log-step">
-        <h4>1단계: 프레이밍 요청</h4>
-        <div class="prompt-box">
-          "해외 바이어와의 비공식 6시간을 설계해야 해. 바이어는 독일 제조업 VP.
-          이 시간을 어떻게 해석해야 할지, 핵심 메시지 한 문장을 제안해줘."
-        </div>
-        <p>
-          AI가 "문화 교류의 시간"으로 프레이밍했으나, 이를 배제하고
-          "드러나는 시간"으로 재정의했다. 문화 교류는 여전히 관광의 프레임이다.
-        </p>
-      </div>
-
-      <div class="ai-log-step">
-        <h4>2단계: 타임라인 생성 &rarr; 수정</h4>
-        <div class="prompt-box">
-          "강남 기준으로 실제 존재하는 장소로 6시간 타임라인을 짜줘.
-          각 구간마다 왜 이 선택이 비즈니스적으로 합리적인지 설명해줘."
-        </div>
-        <p>
-          AI 제안에서 "한류 체험관"과 "K-뷰티 매장 방문"을 배제했다.
-          바이어는 소비자가 아니라 의사결정자이며, 트렌드 소비가 아닌 판단력을 보여줘야 한다.
-          현대카드 라이브러리는 AI 제안을 채택한 항목이다.
-        </p>
-      </div>
-
-      <div class="ai-log-step">
-        <h4>3단계: 배제 대안 &amp; 변수 대응</h4>
-        <p>
-          AI에게 "내가 선택하지 않을 만한 대안"을 먼저 생성하게 하고, 각각의 배제 이유를 함께 정리했다.
-          변수 대응에서 AI가 "우천 시 실내 관광지(국립중앙박물관)"를 제안했으나,
-          강남 밖으로 나가지 않는 원칙을 유지하며 COEX 내부 동선으로 대체했다.
-        </p>
-      </div>
-
-      <div class="ai-log-step">
-        <h4>4단계: 웹사이트 구현</h4>
-        <p>
-          결과물을 PPT가 아닌 웹사이트로 제작. AI에게 디자인 구조와 콘텐츠 배치를 지시하고,
-          Google Maps Embed API로 실제 이동 동선을 시각화했다.
-          전체 소요 시간: 약 18분.
-        </p>
-      </div>
-
-    </div>
-  </section>
 
   <div class="footer">
     <p>Designed with Claude Code &middot; ISU Group AI Competition 2026</p>
   </div>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    .custom-marker {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 13px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    }
+    .leaflet-popup-content-wrapper {
+      background: #1a1a1a !important;
+      color: #e8e8e8 !important;
+      border-radius: 8px !important;
+      border: 1px solid #333 !important;
+    }
+    .leaflet-popup-tip { background: #1a1a1a !important; }
+    .leaflet-popup-content { font-family: 'Pretendard', sans-serif; font-size: 13px; line-height: 1.5; }
+    .leaflet-popup-content strong { color: #c8a86e; }
+  </style>
+  <script>
+    const stops = [
+      { lat: 37.5121, lng: 127.0589, num: 1, name: "InterContinental COEX", time: "10:00", desc: "호텔 로비 픽업" },
+      { lat: 37.5146, lng: 127.0571, num: 2, name: "봉은사", time: "10:40", desc: "도심 속 사찰 산책" },
+      { lat: 37.5095, lng: 127.0545, num: 3, name: "Fritz Coffee", time: "11:20", desc: "스페셜티 커피 & 대화" },
+      { lat: 37.5175, lng: 127.0362, num: 4, name: "도산공원 한식 코스", time: "12:10", desc: "점심 — 제철 한식 코스" },
+      { lat: 37.5223, lng: 127.0362, num: 5, name: "도산공원 산책", time: "13:30", desc: "식후 산책 & 디자인 거리" },
+      { lat: 37.5198, lng: 127.0233, num: 6, name: "현대카드 라이브러리", time: "14:20", desc: "기업 큐레이션 공간" },
+      { lat: 37.5175, lng: 127.0275, num: 7, name: "오설록 티하우스", time: "15:20", desc: "마무리 — 제주 차 한 잔" },
+    ];
+
+    const map = L.map('route-map', {
+      scrollWheelZoom: false,
+      attributionControl: false,
+    }).setView([37.516, 127.042], 14);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Route line
+    const coords = stops.map(s => [s.lat, s.lng]);
+    L.polyline(coords, {
+      color: '#c8a86e',
+      weight: 3,
+      opacity: 0.7,
+      dashArray: '8, 8',
+    }).addTo(map);
+
+    // Markers
+    stops.forEach(s => {
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="custom-marker">${s.num}</div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14],
+      });
+      L.marker([s.lat, s.lng], { icon })
+        .addTo(map)
+        .bindPopup(`<strong>${s.time}</strong> ${s.name}<br>${s.desc}`);
+    });
+
+    // Fit bounds
+    map.fitBounds(L.latLngBounds(coords).pad(0.15));
+  </script>
 
 </body>
 </html>
