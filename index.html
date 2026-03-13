@@ -102,6 +102,38 @@
     }
     @keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
 
+    .hero-cta {
+      margin-top: 32px;
+      padding: 14px 40px;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+      z-index: 1;
+    }
+    .hero-cta:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Two-stage reveal */
+    .detail-hidden {
+      display: none;
+    }
+    .detail-visible {
+      display: block;
+      animation: fadeSlideIn 0.6s ease-out;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     /* Section */
     section {
       max-width: 960px;
@@ -382,7 +414,7 @@
 </head>
 <body>
 
-  <nav>
+  <nav id="main-nav" style="display:none;">
     <a href="#sec-framing">Framing</a>
     <a href="#sec-buyer">Buyer</a>
     <a href="#sec-timeline">Timeline</a>
@@ -399,8 +431,11 @@
     <div class="hero-message">
       "함께 걷는 속도로 일하는 사람이라는 것을 보여주는 시간"
     </div>
+    <button class="hero-cta" onclick="revealDetail()">과제 확인하기</button>
     <div class="scroll-hint">SCROLL</div>
   </div>
+
+  <div id="detail-wrap" class="detail-hidden">
 
   <!-- FRAMING -->
   <section id="sec-framing">
@@ -710,6 +745,8 @@
     <p>Designed with Claude Code &middot; ISU Group AI Competition 2026</p>
   </div>
 
+  </div><!-- /detail-wrap -->
+
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -721,12 +758,13 @@
       border: 2px solid #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.5);
     }
     .leaflet-popup-content-wrapper {
-      background: #1a1a1a !important; color: #e8e8e8 !important;
-      border-radius: 8px !important; border: 1px solid #333 !important;
+      background: #fff !important; color: #1f2937 !important;
+      border-radius: 8px !important; border: 1px solid #e5e7eb !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
     }
-    .leaflet-popup-tip { background: #1a1a1a !important; }
+    .leaflet-popup-tip { background: #fff !important; }
     .leaflet-popup-content { font-family: 'Pretendard', sans-serif; font-size: 13px; line-height: 1.5; }
-    .leaflet-popup-content strong { color: #c8a86e; }
+    .leaflet-popup-content strong { color: #a68b4b; }
   </style>
   <script>
     const stops = [
@@ -744,7 +782,7 @@
       attributionControl: false,
     }).setView([37.516, 127.042], 14);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
     }).addTo(map);
 
@@ -764,6 +802,22 @@
     });
 
     map.fitBounds(L.latLngBounds(coords).pad(0.15));
+
+    function revealDetail() {
+      const wrap = document.getElementById('detail-wrap');
+      const nav = document.getElementById('main-nav');
+      const btn = document.querySelector('.hero-cta');
+      wrap.classList.remove('detail-hidden');
+      wrap.classList.add('detail-visible');
+      nav.style.display = 'flex';
+      btn.style.display = 'none';
+      document.querySelector('.scroll-hint').style.display = 'none';
+      setTimeout(() => {
+        wrap.scrollIntoView({ behavior: 'smooth' });
+        map.invalidateSize();
+        map.fitBounds(L.latLngBounds(coords).pad(0.15));
+      }, 100);
+    }
   </script>
 
 </body>
