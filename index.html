@@ -710,8 +710,8 @@
     <p>Designed with Claude Code &middot; ISU Group AI Competition 2026</p>
   </div>
 
-  <!-- Naver Maps -->
-  <script src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=f0p51uyanu"></script>
+  <!-- Kakao Maps -->
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=f38508b494a25171cf917f54ef5374d7"></script>
   <script>
     const stops = [
       { lat: 37.5121, lng: 127.0589, num: 1, name: "InterContinental COEX", time: "10:00", desc: "호텔 로비 픽업" },
@@ -723,76 +723,81 @@
       { lat: 37.5175, lng: 127.0275, num: 7, name: "오설록 티하우스", time: "15:20", desc: "마무리 — 제주 차 한 잔" },
     ];
 
-    const map = new naver.maps.Map('route-map', {
-      center: new naver.maps.LatLng(37.516, 127.042),
-      zoom: 14,
-      scrollWheel: false,
-      background: '#0a0a0a',
-      mapTypeId: naver.maps.MapTypeId.NORMAL,
+    const mapContainer = document.getElementById('route-map');
+    const map = new kakao.maps.Map(mapContainer, {
+      center: new kakao.maps.LatLng(37.516, 127.042),
+      level: 5,
+      scrollwheel: false,
     });
 
     // Route polyline
-    const path = stops.map(s => new naver.maps.LatLng(s.lat, s.lng));
-    new naver.maps.Polyline({
+    const linePath = stops.map(s => new kakao.maps.LatLng(s.lat, s.lng));
+    new kakao.maps.Polyline({
       map: map,
-      path: path,
-      strokeColor: '#c8a86e',
+      path: linePath,
       strokeWeight: 3,
+      strokeColor: '#c8a86e',
       strokeOpacity: 0.8,
       strokeStyle: 'shortdash',
     });
 
-    // Markers + InfoWindows
+    // Markers + Overlays
+    let activeOverlay = null;
     stops.forEach(s => {
-      const marker = new naver.maps.Marker({
-        position: new naver.maps.LatLng(s.lat, s.lng),
+      const markerContent = document.createElement('div');
+      markerContent.innerHTML = `<div style="
+        background:#c8a86e; color:#000; font-weight:700; font-size:13px;
+        width:30px; height:30px; border-radius:50%;
+        display:flex; align-items:center; justify-content:center;
+        border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.5);
+        cursor:pointer;
+      ">${s.num}</div>`;
+
+      const overlay = new kakao.maps.CustomOverlay({
+        position: new kakao.maps.LatLng(s.lat, s.lng),
+        content: markerContent,
+        yAnchor: 0.5,
+        xAnchor: 0.5,
         map: map,
-        icon: {
-          content: `<div style="
-            background:#c8a86e; color:#000; font-weight:700; font-size:13px;
-            width:28px; height:28px; border-radius:50%;
-            display:flex; align-items:center; justify-content:center;
-            border:2px solid #fff; box-shadow:0 2px 8px rgba(0,0,0,0.5);
-          ">${s.num}</div>`,
-          size: new naver.maps.Size(28, 28),
-          anchor: new naver.maps.Point(14, 14),
-        },
       });
 
-      const infoWindow = new naver.maps.InfoWindow({
-        content: `<div style="
-          background:#1a1a1a; color:#e8e8e8; padding:12px 16px;
-          border-radius:8px; border:1px solid #333;
-          font-family:Pretendard,sans-serif; font-size:13px; line-height:1.5;
-          min-width:160px;
-        "><strong style="color:#c8a86e">${s.time}</strong> ${s.name}<br>${s.desc}</div>`,
-        borderWidth: 0,
-        backgroundColor: 'transparent',
-        disableAnchor: true,
-        pixelOffset: new naver.maps.Point(0, -8),
+      const infoContent = document.createElement('div');
+      infoContent.innerHTML = `<div style="
+        background:#1a1a1a; color:#e8e8e8; padding:12px 16px;
+        border-radius:8px; border:1px solid #333;
+        font-family:Pretendard,sans-serif; font-size:13px; line-height:1.5;
+        min-width:180px; position:relative; margin-bottom:12px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.6);
+      ">
+        <strong style="color:#c8a86e">${s.time}</strong> ${s.name}<br>
+        <span style="color:#888">${s.desc}</span>
+        <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+          width:0;height:0;border-left:8px solid transparent;
+          border-right:8px solid transparent;border-top:8px solid #333;"></div>
+      </div>`;
+
+      const infoOverlay = new kakao.maps.CustomOverlay({
+        position: new kakao.maps.LatLng(s.lat, s.lng),
+        content: infoContent,
+        yAnchor: 1.6,
+        xAnchor: 0.5,
       });
 
-      naver.maps.Event.addListener(marker, 'click', () => {
-        if (infoWindow.getMap()) {
-          infoWindow.close();
-        } else {
-          infoWindow.open(map, marker);
+      markerContent.addEventListener('click', () => {
+        if (activeOverlay) activeOverlay.setMap(null);
+        if (activeOverlay === infoOverlay) {
+          activeOverlay = null;
+          return;
         }
+        infoOverlay.setMap(map);
+        activeOverlay = infoOverlay;
       });
     });
 
     // Fit bounds
-    const bounds = new naver.maps.LatLngBounds(
-      new naver.maps.LatLng(
-        Math.min(...stops.map(s => s.lat)) - 0.004,
-        Math.min(...stops.map(s => s.lng)) - 0.006
-      ),
-      new naver.maps.LatLng(
-        Math.max(...stops.map(s => s.lat)) + 0.004,
-        Math.max(...stops.map(s => s.lng)) + 0.006
-      )
-    );
-    map.fitBounds(bounds);
+    const bounds = new kakao.maps.LatLngBounds();
+    stops.forEach(s => bounds.extend(new kakao.maps.LatLng(s.lat, s.lng)));
+    map.setBounds(bounds, 80, 80, 80, 80);
   </script>
 
 </body>
