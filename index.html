@@ -85,9 +85,7 @@
       font-size: 1.2rem;
       font-weight: 500;
       color: var(--accent);
-      border: 1px solid var(--accent-dim);
-      padding: 20px 36px;
-      border-radius: 4px;
+      padding: 0;
       max-width: 700px;
       line-height: 1.6;
     }
@@ -103,22 +101,24 @@
     @keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
 
     .hero-cta {
-      margin-top: 32px;
-      padding: 14px 40px;
-      background: transparent;
-      border: 1px solid var(--accent);
-      color: var(--accent);
+      margin-top: 40px;
+      padding: 16px 48px;
+      background: var(--accent);
+      border: none;
+      color: #fff;
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 1px;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       transition: all 0.3s;
       z-index: 1;
+      box-shadow: 0 4px 16px rgba(200, 168, 110, 0.3);
     }
     .hero-cta:hover {
-      background: var(--accent);
-      color: #000;
+      background: var(--accent-dim);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(200, 168, 110, 0.4);
     }
 
     /* Two-stage reveal */
@@ -429,7 +429,7 @@
     <h1>6 Hours with an Overseas Buyer</h1>
     <p class="hero-sub">비공식 시간 속에서 신뢰를 만드는 설계</p>
     <div class="hero-message">
-      "함께 걷는 속도로 일하는 사람이라는 것을 보여주는 시간"
+      "당신이 필요로 하는 것을 이미 이해하고 있는 사람과 함께 있다는 감각"
     </div>
     <button class="hero-cta" onclick="revealDetail()">과제 확인하기</button>
     <div class="scroll-hint">SCROLL</div>
@@ -465,23 +465,23 @@
     <div class="profile-grid">
       <div class="profile-item">
         <div class="label">Name / Company</div>
-        <div class="value">Thomas Keller</div>
-        <div class="value-sub">Schuler Group &mdash; 독일 프레스 장비 제조사</div>
+        <div class="value">David Chen</div>
+        <div class="value-sub">Cerebras Systems &mdash; AI 반도체 설계 기업 (실리콘밸리)</div>
       </div>
       <div class="profile-item">
         <div class="label">Country / Industry</div>
-        <div class="value">Germany / Industrial Manufacturing</div>
-        <div class="value-sub">글로벌 프레스 장비 시장 점유율 1위</div>
+        <div class="value">USA / AI Hardware</div>
+        <div class="value-sub">AI 추론 가속기용 고밀도 PCB 공급망 확보 필요</div>
       </div>
       <div class="profile-item">
         <div class="label">Position</div>
-        <div class="value">VP of Procurement, Asia-Pacific</div>
-        <div class="value-sub">한국 출장 3회차, 기본적인 한식 경험 있음</div>
+        <div class="value">SVP of Supply Chain</div>
+        <div class="value-sub">첫 한국 방문, 아시아 공급망 다변화 목적</div>
       </div>
       <div class="profile-item">
         <div class="label">Key Context</div>
-        <div class="value">공급망 다변화를 위한 한국 파트너 탐색 중</div>
-        <div class="value-sub">효율과 신뢰를 중시하는 엔지니어 출신, 직설적 소통 선호</div>
+        <div class="value">AI 가속기 수요 급증 → 고다층 PCB 파트너 탐색</div>
+        <div class="value-sub">실리콘밸리 문화 &mdash; 캐주얼, 효율, 기술 중심 대화 선호</div>
       </div>
     </div>
   </section>
@@ -493,125 +493,125 @@
     <div class="section-label">03 &mdash; 6-Hour Flow</div>
     <h2>시간 흐름 설계</h2>
     <div class="section-desc">
-      10:00 ~ 16:00 / 강남 반경 3km 이내 / 도보 + 택시 혼합
+      10:00 ~ 16:00 / 반포동 사옥 출발 &rarr; 서래마을·강남·신사 반경 &rarr; 사옥 복귀 / 도보 + 택시
     </div>
 
     <div class="timeline">
 
       <div class="timeline-item">
-        <div class="timeline-time">10:00 &ndash; 10:40</div>
-        <div class="timeline-title">호텔 로비 픽업 &rarr; 도보 이동</div>
-        <div class="timeline-place">InterContinental Seoul COEX &rarr; 봉은사 방면 도보</div>
+        <div class="timeline-time">10:00 &ndash; 10:30</div>
+        <div class="timeline-title">사옥 로비 픽업 &rarr; 서래마을 도보 이동</div>
+        <div class="timeline-place">사평대로 84 (이수그룹 사옥) &rarr; 서래마을 방면</div>
         <div class="timeline-desc">
-          호텔 로비에서 만나 가볍게 인사. 날씨와 컨디션을 확인하며 자연스럽게 걷기 시작한다.
-          이 구간은 서로의 페이스를 확인하는 시간이다. 급하지 않게, 하지만 목적 없이 걷지도 않는다.
+          사옥 1층 로비에서 만나 가볍게 인사. "우리 사무실 바로 옆 동네를 한 바퀴 걸어보겠습니다."
+          서래마을까지 도보 10분. 걸으며 서로의 페이스와 에너지를 확인한다.
         </div>
         <div class="timeline-why">
-          <strong>Why: </strong>첫 만남에서 차량 대신 도보를 선택한 이유는 명확하다.
-          차 안에서는 대화가 의무가 되지만, 걸으면 침묵도 자연스럽다.
-          상대의 체력과 성향을 파악하는 데 10분이면 충분하다.
+          <strong>Why: </strong>호텔이 아닌 사옥에서 시작하는 이유: "내 일터에서 만나겠다"는 자세가 곧 태도다.
+          차 대신 걷기를 선택한 이유는 동일 &mdash; 걸으면 침묵도 자연스럽고, 상대의 성향을 읽을 수 있다.
         </div>
+        <div class="timeline-move">&rarr; 도보 10분</div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-time">10:40 &ndash; 11:20</div>
-        <div class="timeline-title">봉은사 산책</div>
-        <div class="timeline-place">봉은사 (삼성동 73)</div>
+        <div class="timeline-time">10:30 &ndash; 11:20</div>
+        <div class="timeline-title">서래마을 산책 &amp; 커피</div>
+        <div class="timeline-place">서래마을 골목 &rarr; 로컬 카페</div>
         <div class="timeline-desc">
-          COEX 뒤편의 봉은사를 가볍게 한 바퀴 돈다. 관광 가이드처럼 설명하지 않는다.
-          "사무실에서 5분 거리에 이런 곳이 있다"는 맥락으로, 도심과 전통이 공존하는 서울의 밀도를 체감하게 한다.
-          독일인 엔지니어에게는 1,200년 된 목조 건축의 구조적 디테일이 자연스러운 대화 소재가 된다.
+          프랑스 학교와 유럽풍 골목이 공존하는 서래마을을 가볍게 한 바퀴.
+          "여기 프랑스 학교가 있어서 동네 자체가 좀 다릅니다" 정도의 맥락만 공유한다.
+          골목 끝 조용한 카페에서 커피. 실리콘밸리 출신에게는 "서울도 워킹 디스턴스 안에 이런 동네가 있다"는 밀도감이 인상적이다.
         </div>
         <div class="timeline-why">
-          <strong>Why: </strong>경복궁이나 남산 대신 봉은사를 선택한 이유: "관광지"가 아니라 "일상 속 공간"이기 때문이다.
-          외국인 전용 관광 코스가 아닌, 실제로 직장인들이 점심시간에 들르는 곳.
-          이 선택 자체가 "나는 당신을 관광객으로 대하지 않겠다"는 메시지다.
+          <strong>Why: </strong>관광지가 아닌 "사옥 옆 일상 동네"로 시작하는 것.
+          이 선택이 "나는 당신을 관광객으로 대하지 않는다"는 메시지를 전달한다.
+          서래마을의 유럽적 분위기는 미국인에게도 자연스럽게 편안함을 준다.
         </div>
-        <div class="timeline-move">&rarr; 도보 5분 이동</div>
+        <div class="timeline-move">&rarr; 택시 10분</div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-time">11:20 &ndash; 12:10</div>
-        <div class="timeline-title">스페셜티 커피 &amp; 업무 맥락 공유</div>
-        <div class="timeline-place">Fritz Coffee Company 삼성점</div>
+        <div class="timeline-time">11:20 &ndash; 12:00</div>
+        <div class="timeline-title">테헤란로 &mdash; 한국의 테크 밀도</div>
+        <div class="timeline-place">강남역 &rarr; 테헤란로 일대</div>
         <div class="timeline-desc">
-          조용한 로스터리에서 커피를 마시며 본격적인 대화로 전환한다.
-          공식 미팅 전이지만, 업무 맥락을 가볍게 꺼낸다.
-          "내일 미팅에서 다룰 주제 중 미리 알아두면 좋을 것이 있나요?"
-          이 질문으로 바이어의 관심사와 우선순위를 사전에 파악한다.
+          택시로 강남역 방면 이동. 테헤란로를 걸으며 한국 스타트업/테크 생태계의 밀도를 체감하게 한다.
+          "이 거리 반경 1km에 한국 VC의 70%가 몰려 있습니다."
+          AI 하드웨어 임원에게는 한국 테크 산업의 규모감과 속도를 보여주는 자연스러운 맥락이 된다.
         </div>
         <div class="timeline-why">
-          <strong>Why: </strong>프랜차이즈가 아닌 독립 로스터리를 선택한 이유: 공간의 질이 대화의 질에 영향을 준다.
-          Fritz는 한국 스페셜티 커피의 대표 브랜드로, "한국에도 이런 커피 문화가 있다"는 자연스러운 인상을 준다.
-          독일은 커피 소비 세계 4위 국가이므로 커피 품질에 대한 기대치가 높다.
+          <strong>Why: </strong>실리콘밸리에 Sand Hill Road가 있다면, 서울에는 테헤란로가 있다.
+          이 비유 하나로 바이어는 한국 테크 생태계를 직관적으로 이해한다.
+          AI 기업 임원에게 관광지보다 이 거리가 100배 더 의미 있다.
         </div>
-        <div class="timeline-move">&rarr; 택시 10분 이동</div>
+        <div class="timeline-move">&rarr; 도보 5분</div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-time">12:10 &ndash; 13:30</div>
+        <div class="timeline-time">12:00 &ndash; 13:20</div>
         <div class="timeline-title">점심 &mdash; 한식 코스</div>
-        <div class="timeline-place">도산공원 인근, 한식 코스 전문점</div>
+        <div class="timeline-place">강남 인근 한식 코스 전문점</div>
         <div class="timeline-desc">
-          한식을 코스로 내는 소규모 레스토랑. 불고기/갈비 뷔페가 아닌, 제철 식재료 기반의 구성.
-          메뉴 설명은 간결하게 하되, "이 재료가 이 계절에만 나온다"는 맥락을 한두 마디 덧붙인다.
-          과하게 권하지 않는다. 식사 중 대화는 업무보다는 서로의 배경과 관심사 중심으로.
+          제철 식재료 기반 한식 코스. 불고기/갈비 뷔페가 아닌, 한 접시씩 나오는 구성.
+          "이 재료가 이 계절에만 나온다"는 맥락 한두 마디. 과하게 권하지 않는다.
+          자연스럽게 이수그룹과 이수페타시스의 PCB 역량을 맥락 속에서 언급할 타이밍.
+          "내일 미팅에서 보시겠지만, 저희가 고다층 PCB에서 어떤 포지션인지 간략히 말씀드리면..."
         </div>
         <div class="timeline-why">
-          <strong>Why: </strong>접대용 고급 한정식이 아닌 "코스 한식"을 선택한 이유: 한정식은 양이 과하고, 외국인에게는 압도적이다.
-          코스는 페이스 조절이 되고, 한 접시씩 나오니 대화가 끊기지 않는다.
-          독일 비즈니스 문화에서 점심은 효율적이어야 한다 &mdash; 2시간 넘는 식사는 부담이 된다.
+          <strong>Why: </strong>접대용 고급 한정식이 아닌 코스 한식: 양이 과하지 않고 대화 페이스가 유지된다.
+          식사 중 업무 맥락을 "살짝" 꺼내는 것은 미국 비즈니스 문화에서 자연스럽다.
+          한국식 "식사 때는 일 얘기 안 한다"는 룰은 미국인에게 오히려 답답할 수 있다.
         </div>
-        <div class="timeline-move">&rarr; 도보 5분 이동</div>
+        <div class="timeline-move">&rarr; 택시 10분</div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-time">13:30 &ndash; 14:20</div>
-        <div class="timeline-title">도산공원 산책 &amp; 디자인 거리</div>
-        <div class="timeline-place">도산공원 &rarr; 도산대로 갤러리/쇼룸 거리</div>
+        <div class="timeline-time">13:20 &ndash; 14:10</div>
+        <div class="timeline-title">반포한강공원 산책</div>
+        <div class="timeline-place">반포한강공원 &rarr; 세빛섬 방면</div>
         <div class="timeline-desc">
-          식후 소화 겸 도산공원을 가볍게 걷는다. 공원 자체보다는, 주변의 디자인 쇼룸과 갤러리가 밀집한 거리를 지나가며
-          "강남이 단순히 비즈니스 지구가 아니라 디자인과 라이프스타일이 공존하는 곳"이라는 인상을 준다.
-          흥미를 보이면 하나 들어가보고, 아니면 지나친다. 상대의 반응에 맞춘다.
+          식후 한강변을 가볍게 걷는다. 도심 한복판에 이런 스케일의 강이 있다는 것 자체가 임팩트.
+          세빛섬을 배경으로 걸으며 자연스러운 대화. 업무 이야기가 나오면 받고, 아니면 풍경을 공유한다.
+          "여기서 사무실까지 걸어서 15분입니다" &mdash; 일상의 밀도를 다시 한번 각인.
         </div>
         <div class="timeline-why">
-          <strong>Why: </strong>식후 바로 실내로 가지 않는 이유: 하루 종일 실내에 있으면 피로가 누적된다.
-          걷기와 앉기의 리듬을 의식적으로 교차시켜 에너지를 유지한다.
-          도산공원 일대는 서울의 현대적 감각을 보여주면서도 과하지 않다.
+          <strong>Why: </strong>식후 바로 실내로 가지 않는 리듬. 걷기와 앉기를 교차시켜 에너지를 유지한다.
+          한강은 "관광지"가 아니라 서울 직장인의 일상 공간이다.
+          실리콘밸리의 Bay Trail과 비슷한 맥락 &mdash; "산책하면서 생각 정리하는 곳"으로 포지셔닝.
         </div>
-        <div class="timeline-move">&rarr; 도보 10분 이동</div>
+        <div class="timeline-move">&rarr; 도보 10분</div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-time">14:20 &ndash; 15:20</div>
-        <div class="timeline-title">현대카드 라이브러리</div>
-        <div class="timeline-place">현대카드 디자인 라이브러리 (가로수길)</div>
+        <div class="timeline-time">14:10 &ndash; 15:10</div>
+        <div class="timeline-title">고속터미널 지하 &amp; 카페</div>
+        <div class="timeline-place">센트럴시티 &rarr; 파미에스테이션 &rarr; 카페</div>
         <div class="timeline-desc">
-          기업이 운영하는 큐레이션 공간. 디자인, 건축, 산업 관련 희귀 서적이 밀집되어 있다.
-          "한국 기업이 문화에 투자하는 방식"을 자연스럽게 보여주는 장소.
-          여기서 30분 정도 자유롭게 둘러본 후, 편한 좌석에서 내일 미팅에 대한 가벼운 사전 정리를 한다.
+          도심 인프라의 밀도를 보여주는 구간. 지하 상가를 지나며 "서울의 지하 인프라"를 체감하게 한다.
+          편한 카페에 자리 잡고 내일 미팅 사전 정리. "내일 어떤 부분에 가장 관심이 있으신가요?"
+          바이어의 우선순위를 파악하고, 미팅 준비에 반영할 수 있는 마지막 기회.
         </div>
         <div class="timeline-why">
-          <strong>Why: </strong>박물관이 아닌 기업 라이브러리를 선택한 이유: 바이어는 관광객이 아니라 비즈니스맨이다.
-          기업의 문화 투자 방식을 보여주는 것은 곧 "한국 시장의 성숙도"를 간접적으로 전달하는 것이다.
-          엔지니어 출신 VP에게 디자인/산업 서적 아카이브는 흥미로운 소재가 된다.
+          <strong>Why: </strong>쇼핑이 목적이 아니다. 서울의 인프라 밀도를 "지나가면서" 보여주는 것.
+          미국인에게 한국 도시 인프라의 효율성은 놀라운 포인트 중 하나다.
+          카페에서 내일 미팅을 자연스럽게 세팅하는 것이 이 시간의 진짜 목적.
         </div>
-        <div class="timeline-move">&rarr; 도보 8분 이동</div>
+        <div class="timeline-move">&rarr; 택시 5분</div>
       </div>
 
       <div class="timeline-item">
-        <div class="timeline-time">15:20 &ndash; 16:00</div>
-        <div class="timeline-title">마무리 &mdash; 티 한 잔과 내일의 약속</div>
-        <div class="timeline-place">오설록 티하우스 강남</div>
+        <div class="timeline-time">15:10 &ndash; 15:50</div>
+        <div class="timeline-title">마무리 &mdash; 사옥 복귀</div>
+        <div class="timeline-place">사평대로 84 (이수그룹 사옥)</div>
         <div class="timeline-desc">
-          하루를 정리하는 자리. 제주산 차를 마시며 편안하게 대화를 마무리한다.
-          "오늘 시간 내주셔서 감사하다"가 아니라, "내일 미팅이 기대됩니다"로 끝낸다.
-          감사가 아니라 기대를 남기는 마무리. 호텔까지 택시를 잡아드리고 깔끔하게 헤어진다.
+          사옥으로 돌아와 로비 또는 인근에서 가벼운 차 한 잔으로 마무리.
+          "오늘 감사합니다"가 아니라 "내일 미팅이 기대됩니다"로 끝낸다.
+          호텔까지 택시를 잡아드리고 깔끔하게 헤어진다.
+          시작한 곳에서 끝나는 것 &mdash; 하루의 동선이 하나의 원을 그린다.
         </div>
         <div class="timeline-why">
-          <strong>Why: </strong>술이 아닌 차로 마무리하는 이유: 내일 공식 미팅이 있다. 바이어의 컨디션을 배려하는 것이 진짜 센스다.
-          오설록은 "제주"라는 한국 고유의 스토리텔링이 가능하면서도 부담 없는 공간이다.
-          마지막 인상이 전체 인상을 결정한다 &mdash; 깔끔하게, 여운을 남기며.
+          <strong>Why: </strong>출발점으로 돌아오는 구조: 바이어에게 "이 사람의 반경 안에서 자연스러운 하루를 보냈다"는 인상을 남긴다.
+          감사가 아니라 기대를 남기는 마무리 &mdash; 관계는 오늘 끝나는 것이 아니라 내일 시작된다.
         </div>
       </div>
 
@@ -629,17 +629,19 @@
     </div>
     <div id="route-map" style="width:100%; height:450px; border-radius:8px; border:1px solid var(--border); background:var(--surface);"></div>
     <div class="route-stops">
-      <span class="route-stop">InterContinental COEX</span>
+      <span class="route-stop">이수그룹 사옥</span>
       <span class="route-arrow">&rarr;</span>
-      <span class="route-stop">봉은사</span>
+      <span class="route-stop">서래마을</span>
       <span class="route-arrow">&rarr;</span>
-      <span class="route-stop">Fritz Coffee</span>
+      <span class="route-stop">테헤란로</span>
       <span class="route-arrow">&rarr;</span>
-      <span class="route-stop">도산공원 한식 코스</span>
+      <span class="route-stop">한식 코스</span>
       <span class="route-arrow">&rarr;</span>
-      <span class="route-stop">현대카드 라이브러리</span>
+      <span class="route-stop">반포한강공원</span>
       <span class="route-arrow">&rarr;</span>
-      <span class="route-stop">오설록 티하우스</span>
+      <span class="route-stop">고속터미널</span>
+      <span class="route-arrow">&rarr;</span>
+      <span class="route-stop">사옥 복귀</span>
     </div>
   </section>
 
@@ -653,27 +655,27 @@
     <div class="rejected">
       <h4>경복궁 / 북촌 한옥마을</h4>
       <p class="rejected-reason">
-        강남에서 왕복 1시간 이상 소요. 6시간 중 이동에 2시간을 쓰는 것은 비효율적이다.
-        또한 "외국인에게 보여줘야 할 한국"이라는 프레임 자체가 접대의 관점이다.
-        바이어는 관광이 아니라 당신의 일상을 보고 싶어한다.
+        반포에서 왕복 1시간 이상 소요. 6시간 중 이동에 2시간을 쓰는 것은 비효율적이다.
+        "외국인에게 보여줘야 할 한국"이라는 프레임 자체가 접대의 관점이다.
+        실리콘밸리 임원은 효율을 중시한다 &mdash; 이동 시간은 낭비로 느껴진다.
       </p>
     </div>
 
     <div class="rejected">
       <h4>고급 한정식 (가온, 정식당 등)</h4>
       <p class="rejected-reason">
-        1인 15~20만원대의 식사는 인상적이지만, 부담을 준다.
-        비용의 문제가 아니라 "당신을 감동시키려 한다"는 의도가 읽히면 오히려 거리감이 생긴다.
-        독일 비즈니스 문화에서는 과도한 접대를 경계하는 경향이 있다.
+        1인 15~20만원대의 식사는 인상적이지만, 의도가 읽힌다.
+        미국 테크 문화에서 과도한 접대는 오히려 경계심을 유발한다.
+        "감동시키려 한다"는 인상보다 "자연스러운 판단력"을 보여주는 것이 낫다.
       </p>
     </div>
 
     <div class="rejected">
-      <h4>한강 유람선 / 야경 투어</h4>
+      <h4>COEX / 삼성동 코스</h4>
       <p class="rejected-reason">
-        시간대가 낮(10~16시)이므로 야경은 해당 없음.
-        유람선은 이동이 제한되고, 날씨에 취약하며, 대화에 집중하기 어려운 환경이다.
-        "이벤트"를 만들려는 시도는 신뢰보다 퍼포먼스에 가깝다.
+        반포에서 편도 30분. 동선이 넓어지면 이동 피로가 누적된다.
+        6시간이라는 제한 안에서는 반경을 좁게 잡고 밀도를 높이는 것이 낫다.
+        사옥 출발/복귀 구조와 맞지 않는 동선이다.
       </p>
     </div>
 
@@ -681,7 +683,7 @@
       <h4>골프 / 사우나 / 노래방</h4>
       <p class="rejected-reason">
         첫 만남에서 신체적 친밀도가 높은 활동은 문화적 리스크가 크다.
-        특히 독일 비즈니스 관계에서는 사적 공간의 경계가 명확하다.
+        특히 실리콘밸리 비즈니스 관계에서는 프로페셔널한 거리감을 유지한다.
         신뢰는 친밀함이 아니라 예측 가능성에서 온다.
       </p>
     </div>
@@ -701,16 +703,16 @@
       <div class="contingency-item">
         <div class="contingency-trigger">비 / 우천</div>
         <div class="contingency-response">
-          봉은사 산책과 도산공원 구간을 생략하고, COEX 내부 동선으로 전환.
-          COEX 별마당도서관 &rarr; 실내 이동 &rarr; 점심 &rarr; 현대카드 라이브러리 &rarr; 마무리.
+          서래마을 산책과 한강공원 구간을 생략하고, 실내 동선으로 전환.
+          사옥 근처 카페 &rarr; 택시로 강남 점심 &rarr; 고속터미널(센트럴시티) 실내 &rarr; 사옥 복귀.
           전체 흐름의 리듬(걷기-앉기-대화)은 유지하되, 실내로 옮긴다.
         </div>
       </div>
       <div class="contingency-item">
         <div class="contingency-trigger">미세먼지</div>
         <div class="contingency-response">
-          실외 구간을 최소화. 봉은사는 짧게(10분), 도산공원은 택시로 통과.
-          대신 현대카드 라이브러리 체류 시간을 늘려 실내 대화 시간을 확보한다.
+          실외 구간을 최소화. 서래마을은 짧게(10분), 한강공원은 택시로 통과.
+          대신 카페 체류 시간을 늘려 실내 대화 시간을 확보한다.
           마스크를 미리 준비해두고, "서울의 현실"로 자연스럽게 언급한다.
         </div>
       </div>
@@ -725,7 +727,7 @@
       <div class="contingency-item">
         <div class="contingency-trigger">식당 만석</div>
         <div class="contingency-response">
-          도산공원 반경 500m에 대안 3곳을 사전에 확인해둔다.
+          강남역 반경 500m에 대안 3곳을 사전에 확인해둔다.
           예약이 안 되면 "여기 대신 걸어가면 좋은 곳이 있다"고 자연스럽게 전환.
           당황하지 않는 모습 자체가 바이어에게 신뢰를 준다.
         </div>
@@ -768,13 +770,13 @@
   </style>
   <script>
     const stops = [
-      { lat: 37.5121, lng: 127.0589, num: 1, name: "InterContinental COEX", time: "10:00", desc: "호텔 로비 픽업" },
-      { lat: 37.5146, lng: 127.0571, num: 2, name: "봉은사", time: "10:40", desc: "도심 속 사찰 산책" },
-      { lat: 37.5095, lng: 127.0545, num: 3, name: "Fritz Coffee", time: "11:20", desc: "스페셜티 커피 & 대화" },
-      { lat: 37.5175, lng: 127.0362, num: 4, name: "도산공원 한식 코스", time: "12:10", desc: "점심 — 제철 한식 코스" },
-      { lat: 37.5223, lng: 127.0362, num: 5, name: "도산공원 산책", time: "13:30", desc: "식후 산책 & 디자인 거리" },
-      { lat: 37.5198, lng: 127.0233, num: 6, name: "현대카드 라이브러리", time: "14:20", desc: "기업 큐레이션 공간" },
-      { lat: 37.5175, lng: 127.0275, num: 7, name: "오설록 티하우스", time: "15:20", desc: "마무리 — 제주 차 한 잔" },
+      { lat: 37.5045, lng: 127.0040, num: 1, name: "이수그룹 사옥", time: "10:00", desc: "사옥 로비 픽업" },
+      { lat: 37.5005, lng: 126.9970, num: 2, name: "서래마을", time: "10:30", desc: "로컬 동네 산책 & 커피" },
+      { lat: 37.4980, lng: 127.0280, num: 3, name: "테헤란로", time: "11:20", desc: "한국 테크 생태계의 밀도" },
+      { lat: 37.4970, lng: 127.0310, num: 4, name: "한식 코스", time: "12:00", desc: "점심 — 제철 한식 코스" },
+      { lat: 37.5080, lng: 127.0010, num: 5, name: "반포한강공원", time: "13:20", desc: "식후 한강변 산책" },
+      { lat: 37.5045, lng: 127.0020, num: 6, name: "고속터미널", time: "14:10", desc: "도심 인프라 & 미팅 세팅" },
+      { lat: 37.5045, lng: 127.0040, num: 7, name: "사옥 복귀", time: "15:10", desc: "마무리 — 차 한 잔" },
     ];
 
     const map = L.map('route-map', {
@@ -804,19 +806,18 @@
     map.fitBounds(L.latLngBounds(coords).pad(0.15));
 
     function revealDetail() {
+      const hero = document.querySelector('.hero');
       const wrap = document.getElementById('detail-wrap');
       const nav = document.getElementById('main-nav');
-      const btn = document.querySelector('.hero-cta');
+      hero.style.display = 'none';
       wrap.classList.remove('detail-hidden');
       wrap.classList.add('detail-visible');
       nav.style.display = 'flex';
-      btn.style.display = 'none';
-      document.querySelector('.scroll-hint').style.display = 'none';
+      window.scrollTo(0, 0);
       setTimeout(() => {
-        wrap.scrollIntoView({ behavior: 'smooth' });
         map.invalidateSize();
         map.fitBounds(L.latLngBounds(coords).pad(0.15));
-      }, 100);
+      }, 200);
     }
   </script>
 
