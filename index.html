@@ -957,112 +957,97 @@
       const items = [
         {
           n: 1, t: '10:00 - 10:30', title: 'Office Pickup & Walk',
-          desc: 'We will meet you at the lobby of ISU Group headquarters (84 Sapyeong-daero, Seocho-gu). From there, a short 10-minute walk toward Seorae Village.',
-          detail: 'This is intentionally low-key. Walking together sets a comfortable, unhurried pace for the day.',
+          desc: 'Meet at ISU Group HQ lobby (84 Sapyeong-daero). A 10-minute walk toward Seorae Village — intentionally low-key to set a comfortable pace.',
           transport: 'Walk  |  10 min'
         },
         {
           n: 2, t: '10:30 - 11:20', title: 'Seorae Village & Coffee',
-          desc: 'A quiet neighborhood near the French School of Seoul, with a distinctly European atmosphere. We will stop at a local specialty roastery for coffee.',
-          detail: 'This is not a tourist district - it is our actual neighborhood. The multicultural character makes it naturally comfortable for international guests.',
-          transport: 'Taxi  |  10 min to next stop'
+          desc: 'A multicultural neighborhood near the French School of Seoul. Coffee at a local specialty roastery. Not a tourist district — this is our actual neighborhood.',
+          transport: 'Taxi  |  10 min'
         },
         {
           n: 3, t: '11:20 - 12:00', title: 'Teheran-ro Tech District',
-          desc: "Seoul's answer to Sand Hill Road. Within 1km, you will find 70% of Korea's venture capital firms, plus R&D offices of Samsung, Naver, and Kakao.",
-          detail: 'For someone in the AI hardware space, seeing the density of the Korean tech ecosystem firsthand is far more relevant than any tourist landmark.',
-          transport: 'Walk  |  5 min to restaurant'
+          desc: "Seoul's answer to Sand Hill Road — 70% of Korea's venture capital firms within 1km, plus Samsung, Naver, and Kakao R&D offices.",
+          transport: 'Walk  |  5 min'
         },
         {
-          n: 4, t: '12:00 - 13:20', title: 'Lunch - Seasonal Korean Course',
-          desc: 'A curated Korean course meal featuring seasonal ingredients, served one dish at a time. Not a BBQ - this is an experience unique to dining in Seoul.',
-          detail: 'The course format keeps conversation flowing naturally. We chose this over Korean BBQ because BBQ is available worldwide, but seasonal course dining is distinctly Seoul.',
-          transport: 'Taxi  |  10 min to Han River'
+          n: 4, t: '12:00 - 13:20', title: 'Lunch — Seasonal Korean Course',
+          desc: 'A curated Korean course meal with seasonal ingredients, served one dish at a time. We chose this over Korean BBQ — BBQ is available worldwide, but seasonal course dining is distinctly Seoul.',
+          transport: 'Taxi  |  10 min'
         },
         {
           n: 5, t: '13:20 - 14:10', title: 'Han River Riverside Walk',
-          desc: 'The Banpo section of the Han River spans nearly 1km in width - three times wider than the Charles River in Boston. Just 12 minutes from our office.',
-          detail: 'A post-lunch walk along a world-class urban waterfront. Think of it as our Bay Trail - a place where we come to think, not a tourist attraction.',
-          transport: 'Walk  |  10 min to Central City'
+          desc: 'The Banpo section spans nearly 1km wide — three times the Charles River. Think of it as our Bay Trail: a place to walk and think, not a tourist spot.',
+          transport: 'Walk  |  10 min'
         },
         {
           n: 6, t: '14:10 - 15:10', title: 'Central City & Coffee',
-          desc: "A brief walk through Seoul's underground city infrastructure - 800m of connected passages beneath the Express Bus Terminal, one of the city's largest transit hubs.",
-          detail: 'Over coffee, we would love to hear what matters most to you ahead of tomorrow\'s meeting. This is our chance to make sure we address your priorities.',
-          transport: 'Taxi  |  5 min back to office'
+          desc: "Walk through Seoul's underground city infrastructure (800m of connected passages). Over coffee, we'd love to hear your priorities for tomorrow's meeting.",
+          transport: 'Taxi  |  5 min'
         },
         {
           n: 7, t: '15:10 - 15:50', title: 'Return to ISU Group HQ',
-          desc: 'Back at the office for a final cup of tea. We will arrange a taxi to your hotel whenever you are ready.',
-          detail: 'We end where we started - a full circle. We look forward to continuing the conversation at tomorrow\'s meeting.',
+          desc: 'Back at the office for a final cup of tea. We end where we started — a full circle. We will arrange a taxi to your hotel. Looking forward to tomorrow.',
           transport: ''
         },
       ];
 
       items.forEach(item => {
-        if (y > 245) { doc.addPage(); y = 20; }
+        // 각 항목 예상 높이: ~22mm. 부족하면 페이지 넘김
+        if (y > 255) { doc.addPage(); y = 20; }
 
         // Gold circle with number
         doc.setFillColor(...gold);
-        doc.circle(M + 4, y, 4, 'F');
-        doc.setFontSize(10);
-        doc.setTextColor(...white);
-        doc.text(String(item.n), M + 4, y + 1.5, { align: 'center' });
-
-        // Time
+        doc.circle(M + 4, y, 3.5, 'F');
         doc.setFontSize(9);
-        doc.setTextColor(...gold);
-        doc.setFont(undefined, 'bold');
-        doc.text(item.t, M + 13, y - 2);
+        doc.setTextColor(...white);
+        doc.text(String(item.n), M + 4, y + 1.2, { align: 'center' });
 
-        // Title
-        doc.setFontSize(11);
+        // Time + Title (한 줄)
+        doc.setFontSize(9.5);
         doc.setTextColor(...dark);
-        doc.text(item.title, M + 13, y + 3);
+        doc.setFont(undefined, 'bold');
+        doc.text(item.t + '   ' + item.title, M + 12, y + 1);
         doc.setFont(undefined, 'normal');
-        y += 8;
+        y += 6;
 
         // Description
-        doc.setFontSize(9);
-        doc.setTextColor(80, 80, 80);
-        const descLines = doc.splitTextToSize(item.desc, usable - 13);
-        doc.text(descLines, M + 13, y);
-        y += descLines.length * 4 + 2;
-
-        // Detail (italic insight)
-        doc.setFont(undefined, 'italic');
         doc.setFontSize(8.5);
-        doc.setTextColor(...lgray);
-        const detailLines = doc.splitTextToSize(item.detail, usable - 13);
-        doc.text(detailLines, M + 13, y);
-        doc.setFont(undefined, 'normal');
-        y += detailLines.length * 3.8 + 2;
+        doc.setTextColor(80, 80, 80);
+        const descLines = doc.splitTextToSize(item.desc, usable - 12);
+        doc.text(descLines, M + 12, y);
+        y += descLines.length * 3.8 + 1;
 
         // Transport tag
         if (item.transport) {
-          doc.setFontSize(7);
+          doc.setFontSize(6.5);
           doc.setTextColor(...gold);
-          doc.text(item.transport, M + 13, y);
-          y += 4;
+          doc.text(item.transport, M + 12, y);
+          y += 3;
         }
 
-        y += 6;
+        y += 4;
       });
 
-      // ===== PAGE 3: PRACTICAL INFO =====
-      doc.addPage();
-      y = 20;
+      // ===== PRACTICAL INFO (같은 흐름으로 이어짐) =====
+      y += 4;
+      if (y > 230) { doc.addPage(); y = 20; }
 
-      doc.setFontSize(14);
+      doc.setDrawColor(...light);
+      doc.setLineWidth(0.3);
+      doc.line(M, y, W - M, y);
+      y += 8;
+
+      doc.setFontSize(12);
       doc.setTextColor(...dark);
       doc.setFont(undefined, 'bold');
       doc.text('Practical Information', M, y);
       y += 3;
       doc.setDrawColor(...gold);
       doc.setLineWidth(0.5);
-      doc.line(M, y, M + 40, y);
+      doc.line(M, y, M + 36, y);
       doc.setFont(undefined, 'normal');
-      y += 12;
+      y += 8;
 
       const sections = [
         { title: 'What to Wear', text: 'Smart casual. We will be walking about 3km throughout the day, so comfortable shoes are recommended. No formal attire needed.' },
