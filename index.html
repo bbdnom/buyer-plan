@@ -673,115 +673,85 @@
     }
 
     function generatePDF() {
+      // Create a wrapper that html2pdf can reliably capture
+      const wrapper = document.createElement('div');
+      wrapper.id = 'pdf-render-area';
+      wrapper.style.cssText = 'position:absolute; left:-9999px; top:0; width:700px; background:#fff; z-index:1;';
+
       const el = document.createElement('div');
-      el.style.cssText = 'padding:40px; font-family:Pretendard,sans-serif; color:#1f2937; line-height:1.8; max-width:800px;';
+      el.style.cssText = 'padding:40px 36px; font-family:Arial,Helvetica,sans-serif; color:#1f2937; line-height:1.7; width:700px;';
+
+      const stops = [
+        { num: 1, time: '10:00 – 10:30', title: 'Office Pickup & Walk', desc: 'Meet at our office lobby. A short walk to Seorae Village, a charming neighborhood with European character just minutes from our headquarters.' },
+        { num: 2, time: '10:30 – 11:20', title: 'Seorae Village & Coffee', desc: 'Stroll through a multicultural neighborhood home to the French school community. Coffee at a local specialty roastery.' },
+        { num: 3, time: '11:20 – 12:00', title: 'Teheran-ro Tech District', desc: "Walk through Seoul's answer to Sand Hill Road — home to 70% of Korea's venture capital firms and major tech companies." },
+        { num: 4, time: '12:00 – 13:20', title: 'Lunch — Seasonal Korean Course', desc: 'A curated Korean course meal featuring seasonal ingredients. Served one dish at a time, allowing natural conversation flow.' },
+        { num: 5, time: '13:20 – 14:10', title: 'Han River Riverside Walk', desc: 'A post-lunch walk along the Banpo section of the Han River. The river spans nearly 1km here — a rare urban-scale waterfront.' },
+        { num: 6, time: '14:10 – 15:10', title: 'Central City & Coffee', desc: "Pass through Seoul's underground city infrastructure. Settle at a cafe for a relaxed pre-meeting alignment." },
+        { num: 7, time: '15:10 – 15:50', title: 'Return to Office', desc: "Back at the office for a final cup of tea. We'll arrange a taxi to your hotel. Looking forward to tomorrow's meeting." },
+      ];
+
+      let stopsHTML = '';
+      stops.forEach(s => {
+        stopsHTML += `
+          <div style="margin-bottom:18px; padding-left:36px; position:relative;">
+            <div style="position:absolute; left:0; top:2px; background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; text-align:center; line-height:24px; font-size:12px; font-weight:700;">${s.num}</div>
+            <p style="font-weight:600; font-size:13px; color:#1f2937; margin:0 0 4px 0;">${s.time} · ${s.title}</p>
+            <p style="font-size:12px; color:#6b7280; margin:0; line-height:1.6;">${s.desc}</p>
+          </div>`;
+      });
+
       el.innerHTML = `
-        <div style="text-align:center; margin-bottom:40px; border-bottom:2px solid #c8a86e; padding-bottom:24px;">
-          <h1 style="font-family:Playfair Display,serif; font-size:24px; margin-bottom:8px; color:#1f2937;">
-            Your Day in Seoul
-          </h1>
-          <p style="color:#888; font-size:14px;">A curated 6-hour itinerary &middot; ISU Group</p>
+        <div style="text-align:center; margin-bottom:36px; border-bottom:2px solid #c8a86e; padding-bottom:20px;">
+          <h1 style="font-size:22px; margin:0 0 6px 0; color:#1f2937; font-weight:700;">Your Day in Seoul</h1>
+          <p style="color:#999; font-size:13px; margin:0;">A curated 6-hour itinerary · ISU Group</p>
         </div>
 
-        <div style="margin-bottom:32px;">
-          <p style="font-size:13px; color:#6b7280; margin-bottom:4px;">DATE</p>
-          <p style="font-size:15px;">March 2026 &middot; 10:00 AM – 4:00 PM</p>
-          <p style="font-size:13px; color:#6b7280; margin-top:12px; margin-bottom:4px;">YOUR HOST</p>
-          <p style="font-size:15px;">ISU Group &middot; Seocho-gu, Seoul</p>
+        <div style="margin-bottom:28px;">
+          <p style="font-size:12px; color:#6b7280; margin:0 0 2px 0; text-transform:uppercase; letter-spacing:1px;">Date</p>
+          <p style="font-size:14px; margin:0 0 10px 0; color:#1f2937;">March 2026 · 10:00 AM – 4:00 PM</p>
+          <p style="font-size:12px; color:#6b7280; margin:0 0 2px 0; text-transform:uppercase; letter-spacing:1px;">Your Host</p>
+          <p style="font-size:14px; margin:0; color:#1f2937;">ISU Group · Seocho-gu, Seoul</p>
         </div>
 
-        <hr style="border:none; border-top:1px solid #e5e7eb; margin:24px 0;">
+        <div style="border-top:1px solid #e5e7eb; margin:20px 0;"></div>
 
         <div style="margin-bottom:24px;">
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div style="background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">1</div>
-            <div>
-              <p style="font-weight:600; font-size:14px;">10:00 – 10:30 &middot; Office Pickup & Walk</p>
-              <p style="font-size:13px; color:#6b7280;">Meet at our office lobby. A short walk to Seorae Village, a charming neighborhood with European character just minutes from our headquarters.</p>
-            </div>
-          </div>
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div style="background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">2</div>
-            <div>
-              <p style="font-weight:600; font-size:14px;">10:30 – 11:20 &middot; Seorae Village & Coffee</p>
-              <p style="font-size:13px; color:#6b7280;">Stroll through a multicultural neighborhood home to the French school community. Coffee at a local specialty roastery.</p>
-            </div>
-          </div>
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div style="background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">3</div>
-            <div>
-              <p style="font-weight:600; font-size:14px;">11:20 – 12:00 &middot; Teheran-ro Tech District</p>
-              <p style="font-size:13px; color:#6b7280;">Walk through Seoul's answer to Sand Hill Road — home to 70% of Korea's venture capital firms and major tech companies including Samsung, Naver, and Kakao R&D offices.</p>
-            </div>
-          </div>
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div style="background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">4</div>
-            <div>
-              <p style="font-weight:600; font-size:14px;">12:00 – 13:20 &middot; Lunch — Seasonal Korean Course</p>
-              <p style="font-size:13px; color:#6b7280;">A curated Korean course meal featuring seasonal ingredients. Served one dish at a time, allowing natural conversation flow.</p>
-            </div>
-          </div>
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div style="background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">5</div>
-            <div>
-              <p style="font-weight:600; font-size:14px;">13:20 – 14:10 &middot; Han River Riverside Walk</p>
-              <p style="font-size:13px; color:#6b7280;">A post-lunch walk along the Banpo section of the Han River. The river spans nearly 1km here — a rare urban-scale waterfront just 12 minutes from our office.</p>
-            </div>
-          </div>
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div style="background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">6</div>
-            <div>
-              <p style="font-weight:600; font-size:14px;">14:10 – 15:10 &middot; Central City & Coffee</p>
-              <p style="font-size:13px; color:#6b7280;">Pass through Seoul's underground city infrastructure — a glimpse into Korean urban efficiency. Settle at a cafe for a relaxed pre-meeting alignment.</p>
-            </div>
-          </div>
-          <div style="display:flex; gap:12px; margin-bottom:16px;">
-            <div style="background:#c8a86e; color:#fff; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0;">7</div>
-            <div>
-              <p style="font-weight:600; font-size:14px;">15:10 – 15:50 &middot; Return to Office</p>
-              <p style="font-size:13px; color:#6b7280;">Back at the office for a final cup of tea. We'll arrange a taxi to your hotel. Looking forward to tomorrow's meeting.</p>
-            </div>
-          </div>
+          ${stopsHTML}
         </div>
 
-        <hr style="border:none; border-top:1px solid #e5e7eb; margin:24px 0;">
+        <div style="border-top:1px solid #e5e7eb; margin:20px 0;"></div>
 
         <div style="margin-bottom:24px;">
-          <p style="font-weight:600; font-size:14px; margin-bottom:8px;">Practical Notes</p>
-          <p style="font-size:13px; color:#6b7280;">
-            &bull; Dress code: Smart casual<br>
-            &bull; Walking: ~3km total, comfortable shoes recommended<br>
-            &bull; Weather contingency: Indoor alternatives are prepared<br>
-            &bull; Transportation: Walking + taxi (all arranged)<br>
-            &bull; Contact: [Your phone number]
+          <p style="font-weight:600; font-size:13px; margin:0 0 8px 0; color:#1f2937;">Practical Notes</p>
+          <p style="font-size:12px; color:#6b7280; margin:0; line-height:1.8;">
+            · Dress code: Smart casual<br>
+            · Walking: ~3km total, comfortable shoes recommended<br>
+            · Weather contingency: Indoor alternatives are prepared<br>
+            · Transportation: Walking + taxi (all arranged)<br>
+            · Contact: [Your phone number]
           </p>
         </div>
 
-        <div style="text-align:center; padding-top:24px; border-top:1px solid #e5e7eb; color:#aaa; font-size:11px;">
-          Prepared by ISU Group &middot; Seoul, Korea
+        <div style="text-align:center; padding-top:20px; border-top:1px solid #e5e7eb; color:#bbb; font-size:10px;">
+          Prepared by ISU Group · Seoul, Korea
         </div>
       `;
 
-      el.style.position = 'fixed';
-      el.style.left = '0';
-      el.style.top = '0';
-      el.style.width = '800px';
-      el.style.zIndex = '-9999';
-      el.style.background = '#fff';
-      document.body.appendChild(el);
+      wrapper.appendChild(el);
+      document.body.appendChild(wrapper);
 
-      // Wait for layout to complete before capturing
       setTimeout(() => {
         html2pdf().set({
           margin: [10, 10, 10, 10],
           filename: 'Seoul_Itinerary_ISU_Group.pdf',
           image: { type: 'jpeg', quality: 0.98 },
-          html2canvas: { scale: 2, useCORS: true, logging: false },
+          html2canvas: { scale: 2, useCORS: true, width: 700, windowWidth: 700 },
           jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         }).from(el).save().then(() => {
-          document.body.removeChild(el);
+          document.body.removeChild(wrapper);
         });
-      }, 300);
+      }, 500);
     }
   </script>
 
