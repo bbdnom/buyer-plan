@@ -726,126 +726,355 @@
     }
 
     function generatePDF() {
+      // Load logo first, then generate PDF
+      const logoImg = new Image();
+      logoImg.crossOrigin = 'anonymous';
+      logoImg.onload = function() {
+        // Convert logo to base64
+        const canvas = document.createElement('canvas');
+        canvas.width = logoImg.naturalWidth;
+        canvas.height = logoImg.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(logoImg, 0, 0);
+        const logoBase64 = canvas.toDataURL('image/png');
+        buildPDF(logoBase64);
+      };
+      logoImg.onerror = function() {
+        // If logo fails to load, generate without it
+        buildPDF(null);
+      };
+      logoImg.src = 'https://recruit.isu.co.kr/wordpress/wp-content/uploads/2019/05/gnb_logo.png';
+    }
+
+    function buildPDF(logoBase64) {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF({ unit: 'mm', format: 'a4' });
-      const W = 210, M = 20; // page width, margin
+      const W = 210, M = 20;
       const usable = W - M * 2;
-      let y = 25;
+      let y = 20;
 
       // Colors
       const gold = [200, 168, 110];
       const dark = [31, 41, 55];
       const gray = [107, 114, 128];
+      const lgray = [160, 160, 160];
       const light = [229, 231, 235];
+      const white = [255, 255, 255];
 
-      // --- Header ---
-      doc.setFontSize(22);
+      // ===== PAGE 1: COVER + OVERVIEW =====
+
+      // Logo
+      if (logoBase64) {
+        try { doc.addImage(logoBase64, 'PNG', M, y, 40, 12); } catch(e) {}
+      }
+      y += 20;
+
+      // Title
+      doc.setFontSize(26);
       doc.setTextColor(...dark);
-      doc.text('Your Day in Seoul', W / 2, y, { align: 'center' });
-      y += 8;
-      doc.setFontSize(11);
+      doc.setFont(undefined, 'bold');
+      doc.text('Your Day in Seoul', M, y);
+      y += 9;
+      doc.setFontSize(12);
       doc.setTextColor(...gray);
-      doc.text('A curated 6-hour itinerary  |  ISU Group', W / 2, y, { align: 'center' });
-      y += 8;
+      doc.setFont(undefined, 'normal');
+      doc.text('A curated 6-hour itinerary prepared for you by ISU Group', M, y);
+      y += 6;
       doc.setDrawColor(...gold);
-      doc.setLineWidth(0.5);
+      doc.setLineWidth(0.8);
       doc.line(M, y, W - M, y);
+      y += 14;
+
+      // Info grid (2 columns)
+      const col2 = W / 2 + 5;
+      doc.setFontSize(8);
+      doc.setTextColor(...lgray);
+      doc.text('DATE', M, y);
+      doc.text('DURATION', col2, y);
+      y += 5;
+      doc.setFontSize(11);
+      doc.setTextColor(...dark);
+      doc.setFont(undefined, 'bold');
+      doc.text('March 2026', M, y);
+      doc.text('6 Hours  (10:00 AM - 4:00 PM)', col2, y);
+      doc.setFont(undefined, 'normal');
+      y += 9;
+      doc.setFontSize(8);
+      doc.setTextColor(...lgray);
+      doc.text('STARTING POINT', M, y);
+      doc.text('TRANSPORTATION', col2, y);
+      y += 5;
+      doc.setFontSize(11);
+      doc.setTextColor(...dark);
+      doc.setFont(undefined, 'bold');
+      doc.text('ISU Group HQ, Seocho-gu', M, y);
+      doc.text('Walking + Taxi (all arranged)', col2, y);
+      doc.setFont(undefined, 'normal');
       y += 12;
 
-      // --- Date / Host ---
-      doc.setFontSize(9);
-      doc.setTextColor(...gray);
-      doc.text('DATE', M, y);
-      y += 5;
-      doc.setFontSize(11);
+      // Welcome message box
+      doc.setFillColor(248, 246, 241);
+      doc.roundedRect(M, y, usable, 28, 3, 3, 'F');
+      y += 7;
+      doc.setFontSize(10);
       doc.setTextColor(...dark);
-      doc.text('March 2026  |  10:00 AM - 4:00 PM', M, y);
+      doc.setFont(undefined, 'italic');
+      const welcome = doc.splitTextToSize('We have prepared a relaxed half-day itinerary for you to experience our neighborhood in Seocho-gu, Seoul. This is not a sightseeing tour - it is a chance to share the places where we actually work, eat, and walk. We hope it gives you a sense of who we are beyond the meeting room.', usable - 12);
+      doc.text(welcome, M + 6, y);
+      doc.setFont(undefined, 'normal');
+      y += welcome.length * 4.5 + 10;
+
+      // ===== ROUTE MAP (schematic) =====
+      y += 4;
+      doc.setFontSize(12);
+      doc.setTextColor(...dark);
+      doc.setFont(undefined, 'bold');
+      doc.text('Route Overview', M, y);
+      doc.setFont(undefined, 'normal');
       y += 8;
-      doc.setFontSize(9);
-      doc.setTextColor(...gray);
-      doc.text('YOUR HOST', M, y);
-      y += 5;
-      doc.setFontSize(11);
-      doc.setTextColor(...dark);
-      doc.text('ISU Group  |  Seocho-gu, Seoul', M, y);
-      y += 10;
+
+      // Draw schematic route map
+      const mapStops = [
+        { n: 1, label: 'ISU HQ', x: 30, y: 0 },
+        { n: 2, label: 'Seorae Village', x: 55, y: 18 },
+        { n: 3, label: 'Teheran-ro', x: 100, y: 5 },
+        { n: 4, label: 'Korean Lunch', x: 130, y: 18 },
+        { n: 5, label: 'Han River', x: 105, y: 35 },
+        { n: 6, label: 'Central City', x: 60, y: 35 },
+      ];
+      const mapBaseY = y;
+      const mapBaseX = M;
+
+      // Draw connecting lines (dashed feel with segments)
+      doc.setDrawColor(...gold);
+      doc.setLineWidth(0.6);
+      for (let i = 0; i < mapStops.length; i++) {
+        const next = (i + 1) % mapStops.length;
+        doc.line(
+          mapBaseX + mapStops[i].x, mapBaseY + mapStops[i].y,
+          mapBaseX + mapStops[next].x, mapBaseY + mapStops[next].y
+        );
+      }
+
+      // Draw transport labels on lines
+      const transports = ['Walk 10m', 'Taxi 10m', 'Walk 5m', 'Taxi 10m', 'Walk 10m', 'Taxi 5m'];
+      for (let i = 0; i < mapStops.length; i++) {
+        const next = (i + 1) % mapStops.length;
+        const mx = (mapStops[i].x + mapStops[next].x) / 2;
+        const my = (mapStops[i].y + mapStops[next].y) / 2;
+        doc.setFontSize(6);
+        doc.setTextColor(...lgray);
+        doc.text(transports[i], mapBaseX + mx, mapBaseY + my - 2, { align: 'center' });
+      }
+
+      // Draw stop circles and labels
+      mapStops.forEach(s => {
+        doc.setFillColor(...gold);
+        doc.circle(mapBaseX + s.x, mapBaseY + s.y, 4, 'F');
+        doc.setFontSize(9);
+        doc.setTextColor(...white);
+        doc.text(String(s.n), mapBaseX + s.x, mapBaseY + s.y + 1.2, { align: 'center' });
+        doc.setFontSize(7);
+        doc.setTextColor(...dark);
+        doc.text(s.label, mapBaseX + s.x, mapBaseY + s.y + 8, { align: 'center' });
+      });
+
+      y = mapBaseY + 52;
+
+      // Divider
       doc.setDrawColor(...light);
       doc.setLineWidth(0.3);
       doc.line(M, y, W - M, y);
+      y += 6;
+
+      // Quick summary
+      doc.setFontSize(8);
+      doc.setTextColor(...lgray);
+      doc.text('Total walking: ~3km  |  Dress code: Smart casual  |  Weather backup plans prepared  |  All logistics arranged by us', M, y);
       y += 10;
 
-      // --- Itinerary ---
+      // ===== PAGE 2: DETAILED ITINERARY =====
+      doc.addPage();
+      y = 20;
+
+      doc.setFontSize(14);
+      doc.setTextColor(...dark);
+      doc.setFont(undefined, 'bold');
+      doc.text('Detailed Itinerary', M, y);
+      y += 3;
+      doc.setDrawColor(...gold);
+      doc.setLineWidth(0.5);
+      doc.line(M, y, M + 40, y);
+      doc.setFont(undefined, 'normal');
+      y += 10;
+
       const items = [
-        { n: 1, t: '10:00 - 10:30', title: 'Office Pickup & Walk to Seorae Village', desc: 'Meet at our office lobby. A short walk to Seorae Village, a charming neighborhood with European character just minutes from headquarters.' },
-        { n: 2, t: '10:30 - 11:20', title: 'Seorae Village & Coffee', desc: 'Stroll through a multicultural neighborhood home to the French school community. Coffee at a local specialty roastery.' },
-        { n: 3, t: '11:20 - 12:00', title: 'Teheran-ro Tech District', desc: "Walk through Seoul's answer to Sand Hill Road - home to 70% of Korea's venture capital firms and major tech companies." },
-        { n: 4, t: '12:00 - 13:20', title: 'Lunch - Seasonal Korean Course', desc: 'A curated Korean course meal featuring seasonal ingredients. Served one dish at a time, allowing natural conversation flow.' },
-        { n: 5, t: '13:20 - 14:10', title: 'Han River Riverside Walk', desc: 'A post-lunch walk along the Banpo section of the Han River. The river spans nearly 1km here - a rare urban-scale waterfront.' },
-        { n: 6, t: '14:10 - 15:10', title: 'Central City & Coffee', desc: "Pass through Seoul's underground city infrastructure. Settle at a cafe for a relaxed pre-meeting alignment." },
-        { n: 7, t: '15:10 - 15:50', title: 'Return to Office', desc: "Back at the office for a final cup of tea. We'll arrange a taxi to your hotel. Looking forward to tomorrow's meeting." },
+        {
+          n: 1, t: '10:00 - 10:30', title: 'Office Pickup & Walk',
+          desc: 'We will meet you at the lobby of ISU Group headquarters (84 Sapyeong-daero, Seocho-gu). From there, a short 10-minute walk toward Seorae Village.',
+          detail: 'This is intentionally low-key. Walking together sets a comfortable, unhurried pace for the day.',
+          transport: 'Walk  |  10 min'
+        },
+        {
+          n: 2, t: '10:30 - 11:20', title: 'Seorae Village & Coffee',
+          desc: 'A quiet neighborhood near the French School of Seoul, with a distinctly European atmosphere. We will stop at a local specialty roastery for coffee.',
+          detail: 'This is not a tourist district - it is our actual neighborhood. The multicultural character makes it naturally comfortable for international guests.',
+          transport: 'Taxi  |  10 min to next stop'
+        },
+        {
+          n: 3, t: '11:20 - 12:00', title: 'Teheran-ro Tech District',
+          desc: "Seoul's answer to Sand Hill Road. Within 1km, you will find 70% of Korea's venture capital firms, plus R&D offices of Samsung, Naver, and Kakao.",
+          detail: 'For someone in the AI hardware space, seeing the density of the Korean tech ecosystem firsthand is far more relevant than any tourist landmark.',
+          transport: 'Walk  |  5 min to restaurant'
+        },
+        {
+          n: 4, t: '12:00 - 13:20', title: 'Lunch - Seasonal Korean Course',
+          desc: 'A curated Korean course meal featuring seasonal ingredients, served one dish at a time. Not a BBQ - this is an experience unique to dining in Seoul.',
+          detail: 'The course format keeps conversation flowing naturally. We chose this over Korean BBQ because BBQ is available worldwide, but seasonal course dining is distinctly Seoul.',
+          transport: 'Taxi  |  10 min to Han River'
+        },
+        {
+          n: 5, t: '13:20 - 14:10', title: 'Han River Riverside Walk',
+          desc: 'The Banpo section of the Han River spans nearly 1km in width - three times wider than the Charles River in Boston. Just 12 minutes from our office.',
+          detail: 'A post-lunch walk along a world-class urban waterfront. Think of it as our Bay Trail - a place where we come to think, not a tourist attraction.',
+          transport: 'Walk  |  10 min to Central City'
+        },
+        {
+          n: 6, t: '14:10 - 15:10', title: 'Central City & Coffee',
+          desc: "A brief walk through Seoul's underground city infrastructure - 800m of connected passages beneath the Express Bus Terminal, one of the city's largest transit hubs.",
+          detail: 'Over coffee, we would love to hear what matters most to you ahead of tomorrow\'s meeting. This is our chance to make sure we address your priorities.',
+          transport: 'Taxi  |  5 min back to office'
+        },
+        {
+          n: 7, t: '15:10 - 15:50', title: 'Return to ISU Group HQ',
+          desc: 'Back at the office for a final cup of tea. We will arrange a taxi to your hotel whenever you are ready.',
+          detail: 'We end where we started - a full circle. We look forward to continuing the conversation at tomorrow\'s meeting.',
+          transport: ''
+        },
       ];
 
       items.forEach(item => {
-        if (y > 260) { doc.addPage(); y = 25; }
+        if (y > 245) { doc.addPage(); y = 20; }
 
-        // Circle with number
+        // Gold circle with number
         doc.setFillColor(...gold);
-        doc.circle(M + 4, y - 1, 3.5, 'F');
-        doc.setFontSize(9);
-        doc.setTextColor(255, 255, 255);
-        doc.text(String(item.n), M + 4, y + 0.5, { align: 'center' });
+        doc.circle(M + 4, y, 4, 'F');
+        doc.setFontSize(10);
+        doc.setTextColor(...white);
+        doc.text(String(item.n), M + 4, y + 1.5, { align: 'center' });
 
-        // Time + Title
+        // Time
+        doc.setFontSize(9);
+        doc.setTextColor(...gold);
+        doc.setFont(undefined, 'bold');
+        doc.text(item.t, M + 13, y - 2);
+
+        // Title
+        doc.setFontSize(11);
+        doc.setTextColor(...dark);
+        doc.text(item.title, M + 13, y + 3);
+        doc.setFont(undefined, 'normal');
+        y += 8;
+
+        // Description
+        doc.setFontSize(9);
+        doc.setTextColor(80, 80, 80);
+        const descLines = doc.splitTextToSize(item.desc, usable - 13);
+        doc.text(descLines, M + 13, y);
+        y += descLines.length * 4 + 2;
+
+        // Detail (italic insight)
+        doc.setFont(undefined, 'italic');
+        doc.setFontSize(8.5);
+        doc.setTextColor(...lgray);
+        const detailLines = doc.splitTextToSize(item.detail, usable - 13);
+        doc.text(detailLines, M + 13, y);
+        doc.setFont(undefined, 'normal');
+        y += detailLines.length * 3.8 + 2;
+
+        // Transport tag
+        if (item.transport) {
+          doc.setFontSize(7);
+          doc.setTextColor(...gold);
+          doc.text(item.transport, M + 13, y);
+          y += 4;
+        }
+
+        y += 6;
+      });
+
+      // ===== PAGE 3: PRACTICAL INFO =====
+      doc.addPage();
+      y = 20;
+
+      doc.setFontSize(14);
+      doc.setTextColor(...dark);
+      doc.setFont(undefined, 'bold');
+      doc.text('Practical Information', M, y);
+      y += 3;
+      doc.setDrawColor(...gold);
+      doc.setLineWidth(0.5);
+      doc.line(M, y, M + 40, y);
+      doc.setFont(undefined, 'normal');
+      y += 12;
+
+      const sections = [
+        { title: 'What to Wear', text: 'Smart casual. We will be walking about 3km throughout the day, so comfortable shoes are recommended. No formal attire needed.' },
+        { title: 'Weather', text: 'March in Seoul averages 5-12C (41-54F). We recommend a light jacket. If it rains or air quality is poor, we have indoor alternatives prepared for every outdoor segment.' },
+        { title: 'Transportation', text: 'All transportation is arranged. We will walk between nearby stops and take taxis for longer distances. You do not need to arrange anything.' },
+        { title: 'Dietary Preferences', text: 'Please let us know in advance if you have any dietary restrictions or allergies. Our restaurant selections can accommodate most requirements.' },
+        { title: 'Meeting Point', text: 'ISU Group Headquarters, 84 Sapyeong-daero, Seocho-gu, Seoul. We will meet you at the ground floor lobby at 10:00 AM.' },
+        { title: 'Emergency Contact', text: 'Your host will share their mobile number before the day. Seoul is an extremely safe city with world-class medical facilities if needed.' },
+      ];
+
+      sections.forEach(sec => {
+        if (y > 255) { doc.addPage(); y = 20; }
         doc.setFontSize(10);
         doc.setTextColor(...dark);
         doc.setFont(undefined, 'bold');
-        doc.text(item.t + '  |  ' + item.title, M + 12, y);
+        doc.text(sec.title, M, y);
         y += 5;
-
-        // Description (word wrap)
         doc.setFont(undefined, 'normal');
         doc.setFontSize(9);
         doc.setTextColor(...gray);
-        const lines = doc.splitTextToSize(item.desc, usable - 12);
-        doc.text(lines, M + 12, y);
-        y += lines.length * 4.5 + 8;
+        const lines = doc.splitTextToSize(sec.text, usable);
+        doc.text(lines, M, y);
+        y += lines.length * 4.2 + 8;
       });
 
-      // --- Divider ---
-      y += 2;
-      if (y > 250) { doc.addPage(); y = 25; }
-      doc.setDrawColor(...light);
-      doc.line(M, y, W - M, y);
-      y += 10;
-
-      // --- Practical Notes ---
+      // About ISU Group box
+      y += 4;
+      if (y > 230) { doc.addPage(); y = 20; }
+      doc.setFillColor(248, 246, 241);
+      doc.roundedRect(M, y, usable, 32, 3, 3, 'F');
+      y += 7;
       doc.setFontSize(10);
       doc.setTextColor(...dark);
       doc.setFont(undefined, 'bold');
-      doc.text('Practical Notes', M, y);
-      y += 6;
+      doc.text('About ISU Group', M + 6, y);
+      y += 5;
       doc.setFont(undefined, 'normal');
       doc.setFontSize(9);
       doc.setTextColor(...gray);
-      const notes = [
-        'Dress code: Smart casual',
-        'Walking: ~3km total, comfortable shoes recommended',
-        'Weather contingency: Indoor alternatives are prepared',
-        'Transportation: Walking + taxi (all arranged)',
-      ];
-      notes.forEach(note => {
-        doc.text('  •  ' + note, M, y);
-        y += 5;
-      });
+      const aboutLines = doc.splitTextToSize(
+        'ISU Group is a diversified Korean conglomerate with subsidiaries spanning advanced materials, IT services, and high-tech manufacturing. ISU Petasys, our PCB manufacturing subsidiary, is a global leader in high-layer-count HDI PCBs for AI accelerators, data centers, and next-generation computing platforms.',
+        usable - 12
+      );
+      doc.text(aboutLines, M + 6, y);
+      y += aboutLines.length * 4.2 + 8;
 
-      // --- Footer ---
-      y += 8;
-      doc.setDrawColor(...light);
-      doc.line(M, y, W - M, y);
-      y += 8;
-      doc.setFontSize(8);
-      doc.setTextColor(180, 180, 180);
-      doc.text('Prepared by ISU Group  |  Seoul, Korea', W / 2, y, { align: 'center' });
+      // Footer on every page
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setDrawColor(...light);
+        doc.setLineWidth(0.3);
+        doc.line(M, 282, W - M, 282);
+        doc.setFontSize(7);
+        doc.setTextColor(...lgray);
+        doc.text('ISU Group  |  84 Sapyeong-daero, Seocho-gu, Seoul, Korea', M, 287);
+        doc.text('Page ' + i + ' of ' + totalPages, W - M, 287, { align: 'right' });
+      }
 
       doc.save('Seoul_Itinerary_ISU_Group.pdf');
     }
