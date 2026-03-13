@@ -619,28 +619,45 @@
     .leaflet-popup-content strong { color: #a68b4b; }
   </style>
   <script>
+    // 좌표: 실제 위치 기반 보정
     const stops = [
-      { lat: 37.5048, lng: 127.0040, num: 1, name: "이수그룹 사옥", time: "10:00", desc: "사옥 로비 픽업" },
-      { lat: 37.4975, lng: 126.9935, num: 2, name: "서래마을", time: "10:30", desc: "로컬 동네 산책 & 커피" },
-      { lat: 37.5000, lng: 127.0365, num: 3, name: "테헤란로", time: "11:20", desc: "한국 테크 생태계의 밀도" },
-      { lat: 37.4960, lng: 127.0310, num: 4, name: "한식 코스", time: "12:00", desc: "점심 — 제철 한식 코스" },
-      { lat: 37.5110, lng: 126.9960, num: 5, name: "반포한강공원", time: "13:20", desc: "식후 한강변 산책" },
-      { lat: 37.5050, lng: 126.9970, num: 6, name: "고속터미널", time: "14:10", desc: "도심 인프라 & 미팅 세팅" },
+      { lat: 37.5045, lng: 127.0023, num: 1, name: "이수그룹 사옥", time: "10:00", desc: "사옥 로비 픽업", move: "도보 10분 →" },
+      { lat: 37.4965, lng: 126.9920, num: 2, name: "서래마을", time: "10:30", desc: "로컬 동네 산책 & 커피", move: "택시 10분 →" },
+      { lat: 37.5005, lng: 127.0367, num: 3, name: "테헤란로", time: "11:20", desc: "한국 테크 밀집 지역", move: "도보 5분 →" },
+      { lat: 37.4975, lng: 127.0300, num: 4, name: "한식 코스 레스토랑", time: "12:00", desc: "점심 — 제철 한식 코스", move: "택시 10분 →" },
+      { lat: 37.5110, lng: 126.9960, num: 5, name: "반포한강공원", time: "13:20", desc: "식후 한강변 산책", move: "도보 10분 →" },
+      { lat: 37.5045, lng: 126.9960, num: 6, name: "고속터미널·센트럴시티", time: "14:10", desc: "도심 인프라 & 카페 미팅 세팅", move: "택시 5분 → 사옥 복귀" },
     ];
 
     const map = L.map('route-map', {
       scrollWheelZoom: false,
       attributionControl: false,
-    }).setView([37.502, 127.015], 14);
+    }).setView([37.503, 127.012], 14);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
     }).addTo(map);
 
+    // 동선 폴리라인 (순환 구조: 마지막에 사옥으로 복귀)
     const coords = stops.map(s => [s.lat, s.lng]);
-    coords.push([37.5048, 127.0040]);
+    coords.push([stops[0].lat, stops[0].lng]); // 사옥 복귀
     L.polyline(coords, { color: '#c8a86e', weight: 3, opacity: 0.7, dashArray: '8, 8' }).addTo(map);
 
+    // 구간별 이동 방향 표시 (중간 지점에 화살표 마커)
+    for (let i = 0; i < coords.length - 1; i++) {
+      const midLat = (coords[i][0] + coords[i+1][0]) / 2;
+      const midLng = (coords[i][1] + coords[i+1][1]) / 2;
+      const angle = Math.atan2(coords[i+1][1] - coords[i][1], coords[i+1][0] - coords[i][0]) * (180 / Math.PI);
+      const arrowIcon = L.divIcon({
+        className: '',
+        html: `<div style="color:#c8a86e; font-size:16px; font-weight:700; transform:rotate(${90-angle}deg); text-shadow:0 1px 3px rgba(0,0,0,0.5);">▼</div>`,
+        iconSize: [16, 16],
+        iconAnchor: [8, 8],
+      });
+      L.marker([midLat, midLng], { icon: arrowIcon, interactive: false }).addTo(map);
+    }
+
+    // 마커 + 팝업
     stops.forEach(s => {
       const icon = L.divIcon({
         className: '',
@@ -650,10 +667,10 @@
       });
       L.marker([s.lat, s.lng], { icon })
         .addTo(map)
-        .bindPopup(`<strong>${s.time}</strong> ${s.name}<br>${s.desc}`);
+        .bindPopup(`<strong>${s.time}</strong> ${s.name}<br>${s.desc}<br><span style="color:#888; font-size:11px;">${s.move}</span>`);
     });
 
-    map.fitBounds(L.latLngBounds(coords).pad(0.15));
+    map.fitBounds(L.latLngBounds(coords).pad(0.12));
 
     function revealDetail() {
       const hero = document.querySelector('.hero');
