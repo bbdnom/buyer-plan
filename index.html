@@ -756,7 +756,7 @@
           console.error('PDF logo error:', e);
         }
       }
-      y += 22;
+      y += 30;
 
       // Title
       doc.setFontSize(26);
@@ -813,62 +813,119 @@
       doc.setFont(undefined, 'normal');
       y += welcome.length * 4.5 + 10;
 
-      // ===== ROUTE MAP (schematic) =====
+      // ===== ROUTE MAP (schematic with background) =====
       y += 4;
       doc.setFontSize(12);
       doc.setTextColor(...dark);
       doc.setFont(undefined, 'bold');
       doc.text('Route Overview', M, y);
       doc.setFont(undefined, 'normal');
-      y += 8;
+      y += 6;
 
-      // Draw schematic route map
-      const mapStops = [
-        { n: 1, label: 'ISU HQ', x: 30, y: 0 },
-        { n: 2, label: 'Seorae Village', x: 55, y: 18 },
-        { n: 3, label: 'Teheran-ro', x: 100, y: 5 },
-        { n: 4, label: 'Korean Lunch', x: 130, y: 18 },
-        { n: 5, label: 'Han River', x: 105, y: 35 },
-        { n: 6, label: 'Central City', x: 60, y: 35 },
-      ];
-      const mapBaseY = y;
+      const mapW = usable;
+      const mapH = 62;
       const mapBaseX = M;
+      const mapBaseY = y;
 
-      // Draw connecting lines (dashed feel with segments)
+      // --- Map background ---
+      doc.setFillColor(240, 243, 240); // 연한 녹색 (공원/자연)
+      doc.roundedRect(mapBaseX, mapBaseY, mapW, mapH, 4, 4, 'F');
+
+      // 한강 (파란 띠 — 지도 상단)
+      doc.setFillColor(200, 220, 240);
+      doc.rect(mapBaseX, mapBaseY + 6, mapW, 7, 'F');
+      doc.setFontSize(6);
+      doc.setTextColor(130, 160, 190);
+      doc.text('H A N   R I V E R', mapBaseX + mapW / 2, mapBaseY + 10.5, { align: 'center' });
+
+      // 도로 라인들 (회색 가로선)
+      doc.setDrawColor(220, 220, 215);
+      doc.setLineWidth(0.8);
+      doc.line(mapBaseX + 4, mapBaseY + 22, mapBaseX + mapW - 4, mapBaseY + 22); // 반포대로
+      doc.line(mapBaseX + 4, mapBaseY + 38, mapBaseX + mapW - 4, mapBaseY + 38); // 서초대로
+      doc.setDrawColor(210, 210, 205);
+      doc.setLineWidth(0.5);
+      doc.line(mapBaseX + mapW * 0.55, mapBaseY + 14, mapBaseX + mapW * 0.55, mapBaseY + mapH - 4); // 테헤란로 세로
+
+      // 도로 라벨
+      doc.setFontSize(5);
+      doc.setTextColor(170, 170, 165);
+      doc.text('Banpo-daero', mapBaseX + 8, mapBaseY + 21);
+      doc.text('Seocho-daero', mapBaseX + 8, mapBaseY + 37);
+      doc.text('Teheran-ro', mapBaseX + mapW * 0.55 + 2, mapBaseY + 50, { angle: 90 });
+
+      // 구간 정보
+      const mapStops = [
+        { n: 1, label: 'ISU HQ',         x: 20,  y: 28 },
+        { n: 2, label: 'Seorae Village',  x: 12,  y: 46 },
+        { n: 3, label: 'Teheran-ro',      x: 105, y: 32 },
+        { n: 4, label: 'Korean Lunch',    x: 110, y: 46 },
+        { n: 5, label: 'Han River Park',  x: 55,  y: 16 },
+        { n: 6, label: 'Central City',    x: 38,  y: 28 },
+      ];
+
+      // 경로 연결선 (금색 점선)
       doc.setDrawColor(...gold);
-      doc.setLineWidth(0.6);
-      for (let i = 0; i < mapStops.length; i++) {
-        const next = (i + 1) % mapStops.length;
-        doc.line(
-          mapBaseX + mapStops[i].x, mapBaseY + mapStops[i].y,
-          mapBaseX + mapStops[next].x, mapBaseY + mapStops[next].y
-        );
+      doc.setLineWidth(0.7);
+      const routeOrder = [0, 1, 2, 3, 4, 5, 0]; // 순환
+      for (let i = 0; i < routeOrder.length - 1; i++) {
+        const a = mapStops[routeOrder[i]];
+        const b = mapStops[routeOrder[i + 1]];
+        // 점선 효과
+        const dx = b.x - a.x, dy = b.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const segments = Math.floor(dist / 3);
+        for (let s = 0; s < segments; s += 2) {
+          const t1 = s / segments, t2 = Math.min((s + 1) / segments, 1);
+          doc.line(
+            mapBaseX + a.x + dx * t1, mapBaseY + a.y + dy * t1,
+            mapBaseX + a.x + dx * t2, mapBaseY + a.y + dy * t2
+          );
+        }
       }
 
-      // Draw transport labels on lines
-      const transports = ['Walk 10m', 'Taxi 10m', 'Walk 5m', 'Taxi 10m', 'Walk 10m', 'Taxi 5m'];
-      for (let i = 0; i < mapStops.length; i++) {
-        const next = (i + 1) % mapStops.length;
-        const mx = (mapStops[i].x + mapStops[next].x) / 2;
-        const my = (mapStops[i].y + mapStops[next].y) / 2;
-        doc.setFontSize(6);
-        doc.setTextColor(...lgray);
-        doc.text(transports[i], mapBaseX + mx, mapBaseY + my - 2, { align: 'center' });
-      }
-
-      // Draw stop circles and labels
-      mapStops.forEach(s => {
-        doc.setFillColor(...gold);
-        doc.circle(mapBaseX + s.x, mapBaseY + s.y, 4, 'F');
-        doc.setFontSize(9);
-        doc.setTextColor(...white);
-        doc.text(String(s.n), mapBaseX + s.x, mapBaseY + s.y + 1.2, { align: 'center' });
-        doc.setFontSize(7);
-        doc.setTextColor(...dark);
-        doc.text(s.label, mapBaseX + s.x, mapBaseY + s.y + 8, { align: 'center' });
+      // 이동수단 라벨
+      const transports = [
+        { from: 0, to: 1, label: 'Walk 10m' },
+        { from: 1, to: 2, label: 'Taxi 10m' },
+        { from: 2, to: 3, label: 'Walk 5m' },
+        { from: 3, to: 4, label: 'Taxi 10m' },
+        { from: 4, to: 5, label: 'Walk 10m' },
+        { from: 5, to: 0, label: 'Taxi 5m' },
+      ];
+      transports.forEach(t => {
+        const a = mapStops[t.from], b = mapStops[t.to];
+        const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        // 라벨 배경
+        doc.setFillColor(255, 255, 255);
+        const tw = doc.getTextWidth(t.label) + 2;
+        doc.setFontSize(5.5);
+        doc.roundedRect(mapBaseX + mx - tw / 2 - 1, mapBaseY + my - 4, tw + 2, 5, 1, 1, 'F');
+        doc.setTextColor(...gold);
+        doc.text(t.label, mapBaseX + mx, mapBaseY + my - 0.5, { align: 'center' });
       });
 
-      y = mapBaseY + 52;
+      // 정류장 마커
+      mapStops.forEach(s => {
+        // 흰색 외곽 원
+        doc.setFillColor(...white);
+        doc.circle(mapBaseX + s.x, mapBaseY + s.y, 5.5, 'F');
+        // 금색 내부 원
+        doc.setFillColor(...gold);
+        doc.circle(mapBaseX + s.x, mapBaseY + s.y, 4.5, 'F');
+        // 번호
+        doc.setFontSize(10);
+        doc.setTextColor(...white);
+        doc.setFont(undefined, 'bold');
+        doc.text(String(s.n), mapBaseX + s.x, mapBaseY + s.y + 1.5, { align: 'center' });
+        // 라벨
+        doc.setFont(undefined, 'normal');
+        doc.setFontSize(6.5);
+        doc.setTextColor(...dark);
+        doc.text(s.label, mapBaseX + s.x, mapBaseY + s.y + 9, { align: 'center' });
+      });
+
+      y = mapBaseY + mapH + 6;
 
       // Divider
       doc.setDrawColor(...light);
