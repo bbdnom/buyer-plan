@@ -770,13 +770,12 @@
   </style>
   <script>
     const stops = [
-      { lat: 37.5045, lng: 127.0040, num: 1, name: "이수그룹 사옥", time: "10:00", desc: "사옥 로비 픽업" },
-      { lat: 37.5005, lng: 126.9970, num: 2, name: "서래마을", time: "10:30", desc: "로컬 동네 산책 & 커피" },
-      { lat: 37.4980, lng: 127.0280, num: 3, name: "테헤란로", time: "11:20", desc: "한국 테크 생태계의 밀도" },
-      { lat: 37.4970, lng: 127.0310, num: 4, name: "한식 코스", time: "12:00", desc: "점심 — 제철 한식 코스" },
-      { lat: 37.5080, lng: 127.0010, num: 5, name: "반포한강공원", time: "13:20", desc: "식후 한강변 산책" },
-      { lat: 37.5045, lng: 127.0020, num: 6, name: "고속터미널", time: "14:10", desc: "도심 인프라 & 미팅 세팅" },
-      { lat: 37.5045, lng: 127.0040, num: 7, name: "사옥 복귀", time: "15:10", desc: "마무리 — 차 한 잔" },
+      { lat: 37.5048, lng: 127.0040, num: 1, name: "이수그룹 사옥", time: "10:00", desc: "사옥 로비 픽업" },
+      { lat: 37.4975, lng: 126.9935, num: 2, name: "서래마을", time: "10:30", desc: "로컬 동네 산책 & 커피" },
+      { lat: 37.5000, lng: 127.0365, num: 3, name: "테헤란로", time: "11:20", desc: "한국 테크 생태계의 밀도" },
+      { lat: 37.4960, lng: 127.0310, num: 4, name: "한식 코스", time: "12:00", desc: "점심 — 제철 한식 코스" },
+      { lat: 37.5110, lng: 126.9960, num: 5, name: "반포한강공원", time: "13:20", desc: "식후 한강변 산책" },
+      { lat: 37.5050, lng: 126.9970, num: 6, name: "고속터미널", time: "14:10", desc: "도심 인프라 & 미팅 세팅" },
     ];
 
     const map = L.map('route-map', {
@@ -789,6 +788,7 @@
     }).addTo(map);
 
     const coords = stops.map(s => [s.lat, s.lng]);
+    coords.push([37.5048, 127.0040]); // 사옥 복귀
     L.polyline(coords, { color: '#c8a86e', weight: 3, opacity: 0.7, dashArray: '8, 8' }).addTo(map);
 
     stops.forEach(s => {
